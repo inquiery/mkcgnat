@@ -111,7 +111,6 @@ type
     procedure Ed_RangesClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure SaveDialogCanClose(Sender: TObject; var CanClose: boolean);
   private
     Ranges: TAddrRanges;
     function CheckPublic: Boolean;
@@ -441,11 +440,6 @@ begin
   Ini.Free;
 end;
 
-procedure TfrmMain.SaveDialogCanClose(Sender: TObject; var CanClose: boolean);
-begin
-
-end;
-
 procedure TfrmMain.Ed_LocalChange(Sender: TObject);
 begin
   Sumerize;
@@ -479,7 +473,7 @@ var
 
     //Ed_Script.Lines.Add(Format('%d: %s %s -> %s [%d-%d]', [PickedUses, IntToAddress(IntAddrToIntNetwork(LocalI, Prefix)) + '/' + IntToStr(Prefix), LocalIP, Picked, Port, Port + PortsPerIP - 1]));
 
-    chain := Format('zz-chain%s/%d', [IntToAddress(IntAddrToIntNetwork(LocalI, Prefix)), Prefix]);
+    chain := Format('zz-cgnat%s/%d', [IntToAddress(IntAddrToIntNetwork(LocalI, Prefix)), Prefix]);
     Ed_Script.Lines.Add(Format('/ip firewall nat add chain=%s comment="cgnat" src-address=%s protocol=tcp action=src-nat to-addresses=%s to-ports=%d-%d', [chain, LocalIP, Picked, Port, Port + PortsPerIP - 1]));
     Ed_Script.Lines.Add(Format('/ip firewall nat add chain=%s comment="cgnat" src-address=%s protocol=udp action=src-nat to-addresses=%s to-ports=%d-%d', [chain, LocalIP, Picked, Port, Port + PortsPerIP - 1]));
     Ed_Script.Lines.Add(Format('/ip firewall nat add chain=%s comment="cgnat" src-address=%s protocol=icmp action=src-nat to-addresses=%s', [chain, LocalIP, Picked]));

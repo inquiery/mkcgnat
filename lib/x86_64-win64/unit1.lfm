@@ -9,7 +9,7 @@ object frmMain: TfrmMain
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   Position = poWorkAreaCenter
-  LCLVersion = '2.0.0.4'
+  LCLVersion = '2.0.2.0'
   object DividerBevel1: TDividerBevel
     Left = 8
     Height = 15
@@ -278,7 +278,6 @@ object frmMain: TfrmMain
     ParentColor = False
   end
   object SaveDialog: TSaveDialog
-    OnCanClose = SaveDialogCanClose
     Filter = 'RouterOS Script file(*.rsc)|*.rsc|Todos os arquivos (*.*)|*.*'
     left = 224
     top = 24
