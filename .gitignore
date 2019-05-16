@@ -1,0 +1,7 @@
+lib/
+backup/
+*.exe
+cgnat_rules.exe
+cgnat_rules.dbg
+cgnat_rules.ini
+release/cgnat_rules.ini
