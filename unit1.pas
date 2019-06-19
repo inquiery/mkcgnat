@@ -128,8 +128,8 @@ type
   end;
 
 const
-  CPerPublic: array[0..3] of Integer = (4, 8, 16, 32);
-  CMask: array[0..3] of Integer = (30, 29, 28, 27);
+  CPerPublic: array[0..4] of Integer = (4, 8, 16, 32, 64);
+  CMask: array[0..4] of Integer = (30, 29, 28, 27, 26);
 
 var
   frmMain: TfrmMain;
@@ -365,6 +365,8 @@ var
   Item, sFrom, sTo, sMark: String;
 begin
   CharPos1 := Pos(',', S);
+  if (CharPos1 = 0) and (Length(S) > 0) then
+    CharPos1 := Length(S) + 1;
   while (CharPos1 > 0) do begin
     Item := Copy(S, 1, CharPos1 - 1);
     //S := Copy(S, CharPos1 + 1);
@@ -468,6 +470,8 @@ begin
   Ed_LocalFrom.Text := Ini.ReadString('Local', 'From', '');
   Ed_LocalTo.Text := Ini.ReadString('Local', 'To', '');
   Ed_Division.ItemIndex := Ed_Division.Items.IndexOf(Ini.ReadString('Local', 'Division', ''));
+  if Ed_Division.ItemIndex < 0 then
+    Ed_Division.ItemIndex := 3;
 
   Ranges.LoadFromString(Ini.ReadString('Public', 'Ranges', ''));
   for I := 0 to Ranges.Count - 1 do begin
@@ -639,6 +643,8 @@ begin
 
     Bt_PublicEdit.Enabled := False;
     Bt_PublicRemove.Enabled := False;
+
+    Sumerize;
   end;
 end;
 
@@ -700,6 +706,8 @@ begin
     Item.SubItems.Add(Range.AddrTo);
     Item.SubItems.Add(Range.Mark);
     Item.SubItems.Add(IntToStr(Range.Qty));
+
+    Sumerize;
   end;
 end;
 

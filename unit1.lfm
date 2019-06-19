@@ -75,6 +75,7 @@ object frmMain: TfrmMain
       '8:1'
       '16:1'
       '32:1'
+      '64:1'
     )
     OnChange = Ed_LocalChange
     Style = csDropDownList
@@ -195,7 +196,7 @@ object frmMain: TfrmMain
     Left = 16
     Height = 15
     Top = 408
-    Width = 96
+    Width = 95
     Caption = 'CGNATs possíveis:'
     ParentColor = False
   end
@@ -274,7 +275,7 @@ object frmMain: TfrmMain
     ParentColor = False
   end
   object Lb_ScriptLines: TLabel
-    Left = 368
+    Left = 376
     Height = 15
     Top = 568
     Width = 48
