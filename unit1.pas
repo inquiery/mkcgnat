@@ -128,8 +128,8 @@ type
   end;
 
 const
-  CPerPublic: array[0..4] of Integer = (4, 8, 16, 32, 64);
-  CMask: array[0..4] of Integer = (30, 29, 28, 27, 26);
+  CPerPublic: array[0..5] of Integer = (4, 8, 16, 32, 64, 128);
+  CMask: array[0..5] of Integer = (30, 29, 28, 27, 26, 25);
 
 var
   frmMain: TfrmMain;

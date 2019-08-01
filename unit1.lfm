@@ -76,6 +76,7 @@ object frmMain: TfrmMain
       '16:1'
       '32:1'
       '64:1'
+      '128:1'
     )
     OnChange = Ed_LocalChange
     Style = csDropDownList
@@ -164,6 +165,7 @@ object frmMain: TfrmMain
     Anchors = [akTop, akLeft, akRight, akBottom]
     ScrollBars = ssAutoBoth
     TabOrder = 10
+    WordWrap = False
   end
   object Bt_Generate: TButton
     Left = 296
