@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ComCtrls,
-  DividerBevel, character, IniFiles, math;
+  ExtCtrls, DividerBevel, character, IniFiles, math;
 
 const
   Err_InvalidIPAddress = 'Endereço de IP (%s) inválido.';
@@ -85,6 +85,8 @@ type
     Bt_Generate: TButton;
     Bt_Save: TButton;
     Cb_Lookup: TCheckBox;
+    Ed_IfaceRule: TComboBox;
+    Ed_IfaceValue: TEdit;
     Ed_PublicMark: TEdit;
     Ed_Division: TComboBox;
     DividerBevel1: TDividerBevel;
@@ -94,6 +96,7 @@ type
     Ed_LocalTo: TEdit;
     Ed_PublicTo: TEdit;
     Label1: TLabel;
+    Label10: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     Ed_Ranges: TListView;
@@ -472,6 +475,12 @@ begin
   Ed_Division.ItemIndex := Ed_Division.Items.IndexOf(Ini.ReadString('Local', 'Division', ''));
   if Ed_Division.ItemIndex < 0 then
     Ed_Division.ItemIndex := 3;
+  I := Ed_IfaceRule.Items.IndexOf(Ini.ReadString('Local', 'IfaceRule', ''));
+  if I >= 0 then
+    Ed_IfaceRule.ItemIndex := I
+  else
+    Ed_IfaceRule.ItemIndex := 0;
+  Ed_IfaceValue.Text := Ini.ReadString('Local', 'IfaceValue', '');
 
   Ranges.LoadFromString(Ini.ReadString('Public', 'Ranges', ''));
   for I := 0 to Ranges.Count - 1 do begin
@@ -491,12 +500,20 @@ end;
 procedure TfrmMain.FormDestroy(Sender: TObject);
 var
   Ini: TIniFile;
+  IfaceRule: String;
 begin
   Ini := TIniFile.Create(AppDir + 'cgnat_rules.ini');
+
+  if Ed_IfaceRule.ItemIndex > 0 then
+    IfaceRule := Ed_IfaceRule.Text
+  else
+    IfaceRule := '';
 
   Ini.WriteString('Local', 'From', Ed_LocalFrom.Text);
   Ini.WriteString('Local', 'To', Ed_LocalTo.Text);
   Ini.WriteString('Local', 'Division', Ed_Division.Text);
+  Ini.WriteString('Local', 'IfaceRule', IfaceRule);
+  Ini.WriteString('Local', 'IfaceValue', Ed_IfaceValue.Text);
   Ini.WriteString('Public', 'Ranges', Ranges.SaveAsString);
   Ini.WriteBool('General', 'GenerateLookupRules', Cb_Lookup.Checked);
 
@@ -597,7 +614,14 @@ begin
         Ed_Script.Lines.Clear;
         Ed_Script.Lines.Add('/ip firewall nat remove [find where comment="cgnat"]');
         Ed_Script.Lines.Add('/ip route rule remove [find where comment="cgnat"]');
-        Ed_Script.Lines.Add(Format('/ip firewall nat add chain=srcnat comment="cgnat" src-address=%s-%s action=jump jump-target="zz-cgnat"', [IntToAddress(FromInt), IntToAddress(ToInt)]));
+        case Ed_IfaceRule.ItemIndex of
+          1:
+            Ed_Script.Lines.Add(Format('/ip firewall nat add chain=srcnat comment="cgnat" src-address=%s-%s out-interface=%s action=jump jump-target="zz-cgnat"', [IntToAddress(FromInt), IntToAddress(ToInt), Ed_IfaceValue.Text]));
+          2:
+            Ed_Script.Lines.Add(Format('/ip firewall nat add chain=srcnat comment="cgnat" src-address=%s-%s out-interface-list=%s action=jump jump-target="zz-cgnat"', [IntToAddress(FromInt), IntToAddress(ToInt), Ed_IfaceValue.Text]));
+          else;
+            Ed_Script.Lines.Add(Format('/ip firewall nat add chain=srcnat comment="cgnat" src-address=%s-%s action=jump jump-target="zz-cgnat"', [IntToAddress(FromInt), IntToAddress(ToInt)]));
+        end;
 
         Ranges.Pick(Picked);
         PickedUses := 1;
